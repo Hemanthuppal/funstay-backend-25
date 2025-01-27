@@ -1,4 +1,5 @@
 const employeeModel = require('../models/employeeModel');
+const db = require('../config/db');
 
 // Get all employees
 // const getEmployees = async (req, res) => {
@@ -61,8 +62,74 @@ const getEmployees = async (req, res) => {
   };
   
 
+//assignedemployee
+
+
+const getEmployeesByManagerId = (req, res) => {
+  const managerId = req.user.id; // Ensure req.user is set by your authentication middleware
+
+  // Use a callback to handle the query
+  db.query('SELECT id, name FROM employees WHERE managerId = ?', [managerId], (error, results) => {
+      if (error) {
+          console.error('Error fetching employees:', error);
+          return res.status(500).json({ message: 'Error fetching employees' });
+      }
+      res.status(200).json(results); // Send the results back to the client
+  });
+};
+const assignLead = (req, res) => {
+  const { leadid, employeeId, employeeName } = req.body;
+  
+  console.log("Received employee ID:", employeeId); // Log employee ID
+  console.log("Received employee Name:", employeeName); // Log employee name
+
+  const query = `
+    UPDATE addleads 
+    SET assignedSalesId = ?, assignedSalesName = ? 
+    WHERE leadid = ?
+  `;
+
+  db.query(query, [employeeId, employeeName, leadid], (error, results) => {
+    if (error) {
+      console.error("Error assigning lead:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ message: "Lead not found" });
+    }
+
+    return res.status(200).json({ message: "Lead assigned successfully" });
+  });
+};
+
+
+
+const getEmployeesByManager = (req, res) => {
+  const managerId = req.params.managerId;
+
+  employeeModel.getEmployeesByManagerId(managerId, (err, employees) => {
+    if (err) {
+      res.status(500).json({ message: 'Database query error', error: err });
+      return;
+    }
+
+    if (employees.length === 0) {
+      res.status(404).json({ message: 'No employees found for the selected manager' });
+      return;
+    }
+
+    res.json(employees);
+  });
+};
+
+
+
 module.exports = {
   getEmployees,
   getManagers,
   getAllEmployeesWithManagers,
+  getEmployeesByManagerId ,
+  assignLead,
+  getEmployeesByManager
 };

@@ -51,11 +51,26 @@ const getEmployeesByRole = async (role) => {
     return result;
   };
 
+
+  const getEmployeesByManagerId = (managerId, callback) => {
+    const query = 'SELECT * FROM employees WHERE managerId = ?';
+    db.query(query, [managerId], (err, results) => {
+      if (err) {
+        callback(err, null);
+      } else {
+        callback(null, results);
+      }
+    });
+  };
+  
+
+
 module.exports = {
   registerEmployee,
   getAllEmployees,
   getAllManagers,
   getEmployeeByEmail,
   getManagerById,
-  getEmployeesByRole
+  getEmployeesByRole,
+  getEmployeesByManagerId
 };

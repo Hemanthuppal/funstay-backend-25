@@ -124,6 +124,22 @@ const getEmployeesByManager = (req, res) => {
 };
 
 
+const deleteEmployee = (req, res) => {
+  const employeeId = req.params.id;
+
+  const sql = 'DELETE FROM employees WHERE id = ?';
+  db.query(sql, [employeeId], (err, result) => {
+      if (err) {
+          return res.status(500).json({ error: err.message });
+      }
+      if (result.affectedRows === 0) {
+          return res.status(404).json({ message: 'Employee not found' });
+      }
+      res.status(204).send(); // No Content
+  });
+};
+
+
 
 module.exports = {
   getEmployees,
@@ -131,5 +147,6 @@ module.exports = {
   getAllEmployeesWithManagers,
   getEmployeesByManagerId ,
   assignLead,
-  getEmployeesByManager
+  getEmployeesByManager,
+  deleteEmployee
 };

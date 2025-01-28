@@ -88,7 +88,7 @@ const login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { id: user.id, email: user.email, role: user.role, name:user.name },
       SECRET_KEY,
       { expiresIn: '1h' }
     );
@@ -97,7 +97,8 @@ const login = async (req, res) => {
       message: 'Login successful.',
       token,
       role: user.role,
-      id: user.id
+      id: user.id,
+      name: user.name
     });
   } catch (error) {
     console.error('Error during login:', error);

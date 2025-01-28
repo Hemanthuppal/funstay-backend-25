@@ -7,6 +7,10 @@ const leadRoutes = require('./routes/leadRoutes');
 const opportunityRoutes = require('./routes/opportunityRoutes');
 const commentRoutes = require('./routes/commentRoutes');
 const editleadoppRoute = require("./routes/editleadoppRoute");
+const assigneeRoute = require("./routes/assigneeRoute")
+const travelOpportunityRoute = require("./routes/travelOpportunityRoutes")
+
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -21,7 +25,8 @@ app.use('/api', leadRoutes);
 app.use('/api', opportunityRoutes);
 app.use('/', commentRoutes);
 app.use("/api", editleadoppRoute);
-
+app.use('/', assigneeRoute);
+app.use('/', travelOpportunityRoute);
 
 // Start the server
 app.listen(PORT, () => {

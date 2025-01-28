@@ -6,6 +6,7 @@ const router = express.Router();
 const { getEmployeesByManagerId } = require('../controllers/employeeController');
 
 
+
 router.get('/employees', authenticateJWT, employeeController.getEmployees);
 router.get('/managers',  employeeController.getManagers);
 
@@ -20,5 +21,8 @@ router.get('/employeesassign',authenticateJWT, getEmployeesByManagerId);
 
 
 router.get('/employees/:managerId', employeeController.getEmployeesByManager);
+
+
+router.delete('/employees/:id', employeeController.deleteEmployee);
 
 module.exports = router;

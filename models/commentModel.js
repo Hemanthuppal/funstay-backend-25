@@ -7,7 +7,7 @@ const Comment = {
   },
 
   addComment: (data, callback) => {
-    const query = 'INSERT INTO comments (leadid, timestamp, text) VALUES (?, ?, ?)';
+    const query = 'INSERT INTO comments (name, leadid, timestamp, text) VALUES (?, ?, ?, ?)';
     db.query(query, data, callback);
   },
 };

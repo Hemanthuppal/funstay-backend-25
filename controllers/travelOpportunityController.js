@@ -12,6 +12,7 @@ const getTravelOpportunities = (req, res) => {
     if (results.length > 0) {
       // Send all records together in the response
       const formattedResults = results.map(result => ({
+        id: result.id,
         leadid: result.leadid,
         destination: result.destination,
         start_date: result.start_date,

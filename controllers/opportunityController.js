@@ -4,13 +4,14 @@ const db = require('../config/db');
 exports.createOpportunity = (req, res) => {
   const {
     leadid,
+    customerid, // Add customerid to the destructured request body
     destination,
     start_date,
     end_date,
     duration,
     adults_count,
     children_count,
-    child_ages, // This should be a comma-separated string
+    child_ages,
     approx_budget,
     assignee,
     notes,
@@ -20,13 +21,14 @@ exports.createOpportunity = (req, res) => {
 
   const opportunityData = [
     leadid,
+    customerid, // Include customerid in the opportunityData array
     destination,
     start_date,
     end_date,
     duration,
     adults_count,
     children_count,
-    child_ages, // Ensure this is a single string
+    child_ages,
     approx_budget,
     assignee,
     notes,
@@ -59,18 +61,28 @@ exports.createOpportunity = (req, res) => {
           });
         }
 
-        // Commit transaction
-        db.commit((err) => {
+        // Update customer status to "existing" in customers table
+        Opportunity.updateCustomerStatus(customerid, 'existing', (err) => {
           if (err) {
-            console.error('Error committing transaction:', err);
+            console.error('Error updating customer status:', err);
             return db.rollback(() => {
-              res.status(500).json({ message: 'Failed to commit transaction.' });
+              res.status(500).json({ message: 'Failed to update customer status.' });
             });
           }
 
-          res.status(201).json({
-            message: 'Opportunity created successfully and lead status updated.',
-            opportunityId: result.insertId,
+          // Commit transaction
+          db.commit((err) => {
+            if (err) {
+              console.error('Error committing transaction:', err);
+              return db.rollback(() => {
+                res.status(500).json({ message: 'Failed to commit transaction.' });
+              });
+            }
+
+            res.status(201).json({
+              message: 'Opportunity created successfully, lead status updated, and customer status updated.',
+              opportunityId: result.insertId,
+            });
           });
         });
       });

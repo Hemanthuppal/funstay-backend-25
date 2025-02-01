@@ -9,8 +9,11 @@ const commentRoutes = require('./routes/commentRoutes');
 const editleadoppRoute = require("./routes/editleadoppRoute");
 const assigneeRoute = require("./routes/assigneeRoute")
 const travelOpportunityRoute = require("./routes/travelOpportunityRoutes")
-
-
+const myteamRoutes = require('./routes/myteamRoutes');
+const createcustomeRoute = require('./routes/createcustomeRoute');
+const updatecustomerroute = require('./routes/updatecustomerroute');
+const customertableroute = require('./routes/customertableroute');
+const forgotpasswordRoute = require('./routes/forgotpassword');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -27,7 +30,11 @@ app.use('/', commentRoutes);
 app.use("/api", editleadoppRoute);
 app.use('/', assigneeRoute);
 app.use('/', travelOpportunityRoute);
-
+app.use('/', myteamRoutes);
+app.use('/', createcustomeRoute);
+app.use('/', updatecustomerroute);
+app.use('/', customertableroute);
+app.use('/', forgotpasswordRoute);
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

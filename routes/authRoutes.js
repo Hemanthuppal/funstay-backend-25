@@ -4,5 +4,7 @@ const router = express.Router();
 
 router.post('/register', authController.register);
 router.post('/login', authController.login);
+router.post("/send-otp", authController.sendOtp);
+router.post("/update-password", authController.updatePassword);
 
 module.exports = router;

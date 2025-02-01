@@ -14,13 +14,13 @@ exports.fetchCommentsByLeadId = (req, res) => {
 };
 
 exports.addComment = (req, res) => {
-  const { leadid, timestamp, text } = req.body;
+  const {name, leadid, timestamp, text } = req.body;
 
   if (!leadid || !timestamp || !text) {
     return res.status(400).json({ message: 'All fields are required.' });
   }
 
-  const commentData = [leadid, timestamp, text];
+  const commentData = [name, leadid, timestamp, text];
 
   Comment.addComment(commentData, (err, result) => {
     if (err) {
@@ -30,6 +30,7 @@ exports.addComment = (req, res) => {
 
     res.status(201).json({
       id: result.insertId,
+      name,
       leadid,
       timestamp,
       text,

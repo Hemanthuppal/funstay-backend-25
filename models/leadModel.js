@@ -10,11 +10,12 @@ const Lead = {
       INSERT INTO addleads (
         lead_type, name, email, phone_number, country_code, primarySource, secondarySource, destination,
          another_name, another_email,
-        another_phone_number,corporate_id, description
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        another_phone_number,corporate_id, description,assignedSalesId,assignedSalesName,assign_to_manager,managerid
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    db.query(query, [...data], callback);
-  },
+    db.query(query, [...data], callback);
+  },
+
 
   fetchAllLeads: (callback) => {
     const query = 'SELECT * FROM addleads ORDER BY created_at DESC';

@@ -1,13 +1,87 @@
 const Lead = require('../models/leadModel');
-
+const db = require('../config/db');
 exports.createLead = (req, res) => {
-  const data = Object.values(req.body);
-  Lead.createLead(data, (err, result) => {
+  const {
+    lead_type,
+    name,
+    email,
+    phone_number,
+    country_code,
+    primarySource,
+    secondarySource,
+    destination,
+    another_name,
+    another_email,
+    another_phone_number,
+    corporate_id,
+    description,
+    assignedSalesId,
+    assignedSalesName,
+    assign_to_manager,
+    managerid,
+  } = req.body;
+
+  // Check if customer already exists
+  const checkCustomerQuery = "SELECT id, customer_status FROM customers WHERE phone_number = ?";
+  db.query(checkCustomerQuery, [phone_number], (err, results) => {
     if (err) {
-      console.error('Error inserting lead:', err);
-      res.status(500).json({ message: 'Failed to add lead.' });
+      console.error("Error checking customer existence:", err);
+      return res.status(500).json({ message: "Database error." });
+    }
+
+    let customerId;
+    let customerStatus = "new"; // Default status is 'new'
+
+    if (results.length > 0) {
+      // Customer already exists
+      customerId = results[0].id;
+      // Check the existing customer status
+      if (results[0].customer_status === "existing") {
+        customerStatus = "existing"; // Set status to 'existing' if it is already existing
+      }
+      insertLead();
     } else {
-      res.status(201).json({ message: 'Lead added successfully!', leadId: result.insertId });
+      // Insert new customer
+      const insertCustomerQuery = `
+        INSERT INTO customers (name, email, phone_number, country_code, another_name, another_email, another_phone_number, customer_status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `;
+      const customerData = [
+        name, email, phone_number, country_code, another_name, another_email, another_phone_number, "new"
+      ];
+      
+      db.query(insertCustomerQuery, customerData, (err, result) => {
+        if (err) {
+          console.error("Error inserting customer:", err);
+          return res.status(500).json({ message: "Failed to add customer." });
+        }
+        customerId = result.insertId;
+        insertLead();
+      });
+    }
+
+    function insertLead() {
+      const insertLeadQuery = `
+        INSERT INTO addleads (
+          lead_type, name, email, phone_number, country_code, primarySource, secondarySource, destination,
+          another_name, another_email, another_phone_number, corporate_id, description, assignedSalesId, assignedSalesName,
+          assign_to_manager, managerid, customerid, customer_status
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `;
+      const leadData = [
+        lead_type, name, email, phone_number, country_code, primarySource, secondarySource, destination,
+        another_name, another_email, another_phone_number, corporate_id ? Number(corporate_id) : null,
+        description, assignedSalesId ? Number(assignedSalesId) : null, assignedSalesName, assign_to_manager,
+        managerid ? Number(managerid) : null, customerId, customerStatus // Use the updated customerStatus
+      ];
+      
+      db.query(insertLeadQuery, leadData, (err, result) => {
+        if (err) {
+          console.error("Error inserting/updating lead:", err);
+          return res.status(500).json({ message: "Failed to add lead." });
+        }
+        res.status(201).json({ message: "Lead added/updated successfully!", leadId: result.insertId });
+      });
     }
   });
 };

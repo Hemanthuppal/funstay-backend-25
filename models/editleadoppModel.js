@@ -3,19 +3,35 @@ const db = require("../config/db"); // Adjust the path to your DB configuration
 const updateLead = (leadid, leadData, callback) => {
   const query = `
     UPDATE addleads
-    SET lead_type = ?, name = ?, phone_number = ?, email = ?, sources = ?, description = ?, another_name = ?, another_email = ?, primarySource = ?,
-    secondarySource = ?, another_phone_number = ?,destination = ?, corporate_id = ?, primaryStatus = ?, secondaryStatus = ?, opportunity_status1 = ?, opportunity_status2 = ?
+    SET 
+      lead_type = ?, 
+      name = ?, 
+      phone_number = ?, 
+      email = ?, 
+      sources = ?, 
+      description = ?, 
+      primarySource = ?, 
+      secondarySource = ?, 
+      another_name = ?, 
+      another_email = ?, 
+      another_phone_number = ?, 
+      destination = ?, 
+      corporate_id = ?, 
+      primaryStatus = ?, 
+      secondaryStatus = ?, 
+      opportunity_status1 = ?, 
+      opportunity_status2 = ?
     WHERE leadid = ?`;
 
-  db.query(query, [
+  const values = [
     leadData.lead_type, 
     leadData.name, 
     leadData.phone_number, 
     leadData.email, 
     leadData.sources, 
     leadData.description, 
-    leadData.primarySource,
-    leadData.secondarySource,
+    leadData.primarySource, 
+    leadData.secondarySource, 
     leadData.another_name, 
     leadData.another_email, 
     leadData.another_phone_number, 
@@ -26,8 +42,18 @@ const updateLead = (leadid, leadData, callback) => {
     leadData.opportunity_status1, 
     leadData.opportunity_status2, 
     leadid
-  ], callback);
+  ];
+
+  db.query(query, values, (err, results) => {
+    if (err) {
+      console.error("Error updating lead:", err);
+      return callback(err, null);
+    }
+    console.log("Lead updated successfully:", results);
+    callback(null, results);
+  });
 };
+
 
 const updateOpportunity = (leadid, opportunityData, callback) => {
   const query = `

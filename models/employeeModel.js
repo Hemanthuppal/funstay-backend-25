@@ -62,7 +62,85 @@ const getEmployeesByRole = async (role) => {
       }
     });
   };
-  
+
+
+//   const updateEmployeeModel = (leadid, employeeId, employeeName, managerId, callback) => {
+//     // Update the lead with the new assignee.
+
+//     // Ensure employeeId and managerId are strings
+//     const empId = String(employeeId);
+//     const mgrId = String(managerId);
+    
+//     const updateLeadQuery = 'UPDATE addleads SET assignedSalesName = ?, assignedSalesId = ? WHERE leadid = ?';
+//     db.query(updateLeadQuery, [ employeeId,employeeName, leadid], (err, updateResult) => {
+//         if (err) {
+//             return callback(err);
+//         }
+//         // Insert a notification for the employee.
+//         const notificationMessage = 'Manager assigned you a Lead';
+//         const insertNotificationQuery = `
+//             INSERT INTO notifications (employeeId, managerid, message, createdAt, \`read\`)
+//             VALUES (?, ?, ?, NOW(), 0)
+//         `;
+//         db.query(insertNotificationQuery, [employeeId, managerId, notificationMessage], (err2, insertResult) => {
+//             if (err2) {
+//                 return callback(err2);
+//             }
+//             return callback(null, { updateResult, insertResult });
+//         });
+//     });
+// };
+
+const updateEmployeeModel = (leadid, employeeName, employeeId, managerId, userId, userName, callback) => {
+  // Validate required fields.
+  // if (!leadid || !employeeName || !employeeId || !managerId || !userId || !userName) {
+  //   return callback(new Error('Missing required fields'));
+  // }
+
+  // Update the addleads record with the new assignee information.
+  const updateLeadQuery = 'UPDATE addleads SET assignedSalesName = ?, assignedSalesId = ? WHERE leadid = ?';
+  db.query(updateLeadQuery, [employeeName, employeeId, leadid], (err, updateResult) => {
+    if (err) {
+      return callback(err);
+    }
+
+    // Insert a new record into reassignleads.
+    const insertReassignQuery = `
+      INSERT INTO reassignleads (
+        leadid, assignedSalesId, assignedSalesName, assign_to_manager, managerid
+      )
+      VALUES (?, ?, ?, ?, ?)
+    `;
+    db.query(
+      insertReassignQuery,
+      [leadid, employeeId, employeeName, userName, userId],
+      (errReassign, reassignResult) => {
+        if (errReassign) {
+          return callback(errReassign);
+        }
+
+        // Insert a notification for the manager.
+        const notificationMessage = '(Manager) assigned you a Lead';
+        const insertNotificationQuery = `
+          INSERT INTO notifications (employeeId, managerid, name, message, createdAt, \`read\`)
+          VALUES (?, ?, ?, ?, NOW(), 0)
+        `;
+        db.query(
+          insertNotificationQuery,
+          [employeeId, managerId, userName, notificationMessage],
+          (errNotif, notificationResult) => {
+            if (errNotif) {
+              return callback(errNotif);
+            }
+            return callback(null, { updateResult, reassignResult, notificationResult });
+          }
+        );
+      }
+    );
+  });
+};
+
+
 
 
 module.exports = {
@@ -72,5 +150,6 @@ module.exports = {
   getEmployeeByEmail,
   getManagerById,
   getEmployeesByRole,
-  getEmployeesByManagerId
+  getEmployeesByManagerId,
+  updateEmployeeModel
 };

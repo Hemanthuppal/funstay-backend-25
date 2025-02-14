@@ -1,8 +1,5 @@
 const Lead = require('../models/leadModel');
 const db = require('../config/db');
-
-
-// controller
 exports.createLead = (req, res) => {
   const {
     lead_type,
@@ -22,9 +19,6 @@ exports.createLead = (req, res) => {
     assignedSalesName,
     assign_to_manager,
     managerid,
-    admin,
-    employee_id,
-    manager_id
   } = req.body;
 
   // Check if customer already exists
@@ -41,23 +35,21 @@ exports.createLead = (req, res) => {
     if (results.length > 0) {
       // Customer already exists
       customerId = results[0].id;
+      // Check the existing customer status
       if (results[0].customer_status === "existing") {
-        customerStatus = "existing";
+        customerStatus = "existing"; // Set status to 'existing' if it is already existing
       }
       insertLead();
     } else {
       // Insert new customer
       const insertCustomerQuery = `
-        INSERT INTO customers (
-          name, email, phone_number, country_code,
-          another_name, another_email, another_phone_number, customer_status
-        )
+        INSERT INTO customers (name, email, phone_number, country_code, another_name, another_email, another_phone_number, customer_status)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `;
       const customerData = [
-        name, email, phone_number, country_code,
-        another_name, another_email, another_phone_number, "new"
+        name, email, phone_number, country_code, another_name, another_email, another_phone_number, "new"
       ];
+      
       db.query(insertCustomerQuery, customerData, (err, result) => {
         if (err) {
           console.error("Error inserting customer:", err);
@@ -71,86 +63,28 @@ exports.createLead = (req, res) => {
     function insertLead() {
       const insertLeadQuery = `
         INSERT INTO addleads (
-          lead_type, name, email, phone_number, country_code,
-          primarySource, secondarysource, destination,
-          another_name, another_email, another_phone_number,
-          corporate_id, description, assignedSalesId, assignedSalesName,
+          lead_type, name, email, phone_number, country_code, primarySource, secondarysource, destination,
+          another_name, another_email, another_phone_number, corporate_id, description, assignedSalesId, assignedSalesName,
           assign_to_manager, managerid, customerid, customer_status
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
       const leadData = [
-        lead_type, name, email, phone_number, country_code,
-        primarySource, secondarysource, destination,
-        another_name, another_email, another_phone_number,
-        corporate_id ? Number(corporate_id) : null,
-        description,
-        assignedSalesId ? Number(assignedSalesId) : null,
-        assignedSalesName,
-        assign_to_manager,
-        managerid ? Number(managerid) : null,
-        customerId,
-        customerStatus
+        lead_type, name, email, phone_number, country_code, primarySource, secondarysource, destination,
+        another_name, another_email, another_phone_number, corporate_id ? Number(corporate_id) : null,
+        description, assignedSalesId ? Number(assignedSalesId) : null, assignedSalesName, assign_to_manager,
+        managerid ? Number(managerid) : null, customerId, customerStatus // Use the updated customerStatus
       ];
-
+      
       db.query(insertLeadQuery, leadData, (err, result) => {
         if (err) {
           console.error("Error inserting/updating lead:", err);
           return res.status(500).json({ message: "Failed to add lead." });
         }
-
-        // --- Begin Reassign Lead Insertion ---
-        const reassignLeadQuery = `
-          INSERT INTO reassignleads (
-            leadid, assignedSalesId, assignedSalesName, assign_to_manager, managerid
-          ) VALUES (?, ?, ?, ?, ?)
-        `;
-        const reassignData = [
-          result.insertId,
-          assignedSalesId ? Number(assignedSalesId) : null,
-          assignedSalesName,
-          assign_to_manager,
-          managerid ? Number(managerid) : null
-        ];
-        db.query(reassignLeadQuery, reassignData, (reassignErr, reassignResult) => {
-          if (reassignErr) {
-            console.error("Error inserting into reassignleads:", reassignErr);
-            // We log the error but continue the flow.
-          }
-        });
-        // --- End Reassign Lead Insertion ---
-
-        // --- Begin Notification Insertion ---
-        const notificationMessage = `${admin || ""} assigned you a Lead`;
-        const insertNotificationQuery = `
-          INSERT INTO notifications (
-            employeeId, managerid, name, message, createdAt, \`read\`
-          ) VALUES (?, ?, ?, ?, NOW(), 0)
-        `;
-        db.query(
-          insertNotificationQuery,
-          [
-            employee_id ? Number(employee_id) : null,
-            manager_id ? Number(manager_id) : null,
-            assign_to_manager || null,
-            notificationMessage
-          ],
-          (notificationErr, notificationResult) => {
-            if (notificationErr) {
-              console.error("Error inserting notification:", notificationErr);
-              // Continue even if notification insertion fails.
-            }
-          }
-        );
-        // --- End Notification Insertion ---
-
         res.status(201).json({ message: "Lead added/updated successfully!", leadId: result.insertId });
       });
     }
   });
 };
-
-
-
 
 exports.getAllLeads = (req, res) => {
   Lead.fetchAllLeads((err, results) => {

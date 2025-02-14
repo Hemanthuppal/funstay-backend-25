@@ -35,6 +35,7 @@ router.put('/api/customers/update/by-lead/:leadid', (req, res) => {
         UPDATE customers 
         SET 
           name = COALESCE(?, name), 
+          country_code = COALESCE(?, country_code),
           phone_number = COALESCE(?, phone_number),
           email = COALESCE(?, email), 
           preferred_contact_method = COALESCE(?, preferred_contact_method), 
@@ -46,6 +47,7 @@ router.put('/api/customers/update/by-lead/:leadid', (req, res) => {
   
       const customerValues = [
         customerData.name || null,
+        customerData.country_code || null,
         customerData.phone_number || null,
         customerData.email || null,
         customerData.preferred_contact_method || null,
@@ -70,6 +72,7 @@ router.put('/api/customers/update/by-lead/:leadid', (req, res) => {
           UPDATE addleads 
           SET 
             name = COALESCE(?, name), 
+            country_code = COALESCE(?, country_code),
             phone_number = COALESCE(?, phone_number),
             email = COALESCE(?, email), 
             preferred_contact_method = COALESCE(?, preferred_contact_method), 
@@ -81,6 +84,7 @@ router.put('/api/customers/update/by-lead/:leadid', (req, res) => {
   
         const leadValues = [
           customerData.name || null,
+          customerData.country_code || null,
           customerData.phone_number || null,
           customerData.email || null,
           customerData.preferred_contact_method || null,

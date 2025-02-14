@@ -17,14 +17,21 @@ const forgotpasswordRoute = require('./routes/forgotpassword');
 const countRoute = require('./routes/countRoute');
 const managercountRoute = require('./routes/managercountRoute');
 const salescountRoute = require('./routes/salescountRoute');
+const notificationRoute = require('./routes/notificationRoute');
+const getemployeebyidRoute = require('./routes/getemployeebyidRoute');
+const addmanagerRoute = require('./routes/addmanagerRoute');
+const getandgetbyidemployeeRoute = require('./routes/getandgetbyidemployeeRoute');
+const leadandtraveldataRoute = require('./routes/leadandtraveldataRoute')
+const path = require("path");
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware to parse incoming JSON requests
+
 app.use(bodyParser.json());
 app.use(cors());
 
-// Routes
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/', authRoutes);
 app.use('/', employeeRoutes);
 app.use('/api', leadRoutes);
@@ -41,7 +48,13 @@ app.use('/', forgotpasswordRoute);
 app.use('/', countRoute);
 app.use('/', managercountRoute);
 app.use('/', salescountRoute);
-// Start the server
+app.use('/', notificationRoute);
+app.use('/', getemployeebyidRoute);
+app.use('/', addmanagerRoute);
+app.use('/', getandgetbyidemployeeRoute);
+
+app.use('/api', leadandtraveldataRoute);
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

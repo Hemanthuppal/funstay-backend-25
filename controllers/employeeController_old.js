@@ -1,5 +1,4 @@
 const employeeModel = require('../models/employeeModel');
-const { updateEmployeeModel } = require('../models/employeeModel');
 const db = require('../config/db');
 
 // Get all employees
@@ -78,66 +77,29 @@ const getEmployeesByManagerId = (req, res) => {
       res.status(200).json(results); // Send the results back to the client
   });
 };
-
-
-// const assignLead = (req, res) => {
-//   const { leadid, employeeId, employeeName } = req.body;
-  
-//   console.log("Received employee ID:", employeeId); // Log employee ID
-//   console.log("Received employee Name:", employeeName); // Log employee name
-
-//   const query = `
-//     UPDATE addleads 
-//     SET assignedSalesId = ?, assignedSalesName = ? 
-//     WHERE leadid = ?
-//   `;
-
-//   db.query(query, [employeeId, employeeName, leadid], (error, results) => {
-//     if (error) {
-//       console.error("Error assigning lead:", error);
-//       return res.status(500).json({ message: "Internal server error" });
-//     }
-
-//     if (results.affectedRows === 0) {
-//       return res.status(404).json({ message: "Lead not found" });
-//     }
-
-//     return res.status(200).json({ message: "Lead assigned successfully" });
-//   });
-// };
-
-
-// const assignLead = (req, res) => {
-//   const { leadid,employeeName, employeeId, } = req.body;
-  
-//   console.log("Received employee ID:", employeeId); // Log employee ID
-//   console.log("Received employee Name:", employeeName); // Log employee name
-
-//   updateEmployeeModel(leadid, employeeName, employeeId, (err, results) => {
-//     if (err) {
-//       console.error('Error in updateAssignee:', err);
-//       return res.status(500).json({ message: 'Error updating lead or inserting notification' });
-//     }
-//     res.status(200).json({ message: "Assignee updated and notification sent." });
-//   });
-// };
-
-
 const assignLead = (req, res) => {
-  const { leadid, employeeName, employeeId, managerId, userId, userName } = req.body;
+  const { leadid, employeeId, employeeName } = req.body;
+  
+  console.log("Received employee ID:", employeeId); // Log employee ID
+  console.log("Received employee Name:", employeeName); // Log employee name
 
-  console.log("Received employee ID:", employeeId);
-  console.log("Received employee Name:", employeeName);
-  console.log("Received Manager Name (assign_to_manager):", userName);
-  console.log("Received Manager ID (for reassignleads):", userId);
-  console.log("Received Manager ID (for notifications):", managerId);
+  const query = `
+    UPDATE addleads 
+    SET assignedSalesId = ?, assignedSalesName = ? 
+    WHERE leadid = ?
+  `;
 
-  updateEmployeeModel(leadid, employeeName, employeeId, managerId, userId, userName, (err, results) => {
-    if (err) {
-      console.error('Error in updateEmployeeModel:', err);
-      return res.status(500).json({ message: 'Error updating lead or inserting notification' });
+  db.query(query, [employeeId, employeeName, leadid], (error, results) => {
+    if (error) {
+      console.error("Error assigning lead:", error);
+      return res.status(500).json({ message: "Internal server error" });
     }
-    res.status(200).json({ message: "Assignee updated and notification sent." });
+
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ message: "Lead not found" });
+    }
+
+    return res.status(200).json({ message: "Lead assigned successfully" });
   });
 };
 

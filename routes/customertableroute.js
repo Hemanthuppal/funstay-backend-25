@@ -96,30 +96,30 @@ router.delete('/api/customers/:id', (req, res) => {
 
 router.put('/api/customers/:id', (req, res) => {
   const { id } = req.params;
-  const { name, phone_number, email } = req.body;
+  const { name,country_code, phone_number, email } = req.body;
 
   // Update `customers` table
   const updateCustomerQuery = `
     UPDATE customers 
-    SET name = ?, phone_number = ?, email = ? 
+    SET name = ?, country_code = ?, phone_number = ?, email = ? 
     WHERE id = ?
   `;
 
   // Update `addleads` table
   const updateAddLeadsQuery = `
     UPDATE addleads 
-    SET name = ?, phone_number = ?, email = ? 
+    SET name = ?, country_code = ?, phone_number = ?, email = ? 
     WHERE customerid = ?
   `;
 
   // Execute both queries
-  db.query(updateCustomerQuery, [name, phone_number, email, id], (err, results) => {
+  db.query(updateCustomerQuery, [name,country_code, phone_number, email, id], (err, results) => {
     if (err) {
       console.error('Error updating customer details:', err);
       return res.status(500).json({ message: 'Database error.' });
     }
 
-    db.query(updateAddLeadsQuery, [name, phone_number, email, id], (err, results) => {
+    db.query(updateAddLeadsQuery, [name,country_code, phone_number, email, id], (err, results) => {
       if (err) {
         console.error('Error updating addleads details:', err);
         return res.status(500).json({ message: 'Database error.' });

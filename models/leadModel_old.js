@@ -5,77 +5,16 @@ const db = require('../config/db');
 
 
 const Lead = {
-
-  
-// model
-createLead: (data, callback) => {
-  const query = `
-    INSERT INTO addleads (
-      lead_type, name, email, phone_number, country_code,
-      primarySource, secondarysource, destination,
-      another_name, another_email, another_phone_number,
-      corporate_id, description, assignedSalesId,
-      assignedSalesName, assign_to_manager, managerid
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `;
-  
-  db.query(query, data, (err, result) => {
-    if (err) return callback(err);
-
-    const leadId = result.insertId;
-    // Assuming the following index positions in the data array:
-    // index 13: assignedSalesId, index 14: assignedSalesName,
-    // index 15: assign_to_manager, index 16: managerid
-    const assignedSalesId = data[13] ? Number(data[13]) : null;
-    const assignedSalesName = data[14];
-    const assign_to_manager = data[15];
-    const managerid = data[16] ? Number(data[16]) : null;
-
-    // --- Begin Reassign Lead Insertion ---
-    const reassignQuery = `
-      INSERT INTO reassignleads (
-        leadid, assignedSalesId, assignedSalesName, assign_to_manager, managerid
-      ) VALUES (?, ?, ?, ?, ?)
+  createLead: (data, callback) => {
+    const query = `
+      INSERT INTO addleads (
+        lead_type, name, email, phone_number, country_code, primarySource, secondarysource, destination,
+         another_name, another_email,
+        another_phone_number,corporate_id, description,assignedSalesId,assignedSalesName,assign_to_manager,managerid
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    const reassignData = [
-      leadId,
-      assignedSalesId,
-      assignedSalesName,
-      assign_to_manager,
-      managerid
-    ];
-    db.query(reassignQuery, reassignData, (reassignErr, reassignResult) => {
-      if (reassignErr) {
-        console.error("Error inserting into reassignleads:", reassignErr);
-        // Continue even if an error occurs
-      }
-
-      // --- Begin Notification Insertion ---
-      // Here we assume managerid is used for notification if available.
-      if (managerid) {
-        const notificationMessage = 'Admin assigned you a Lead';
-        const insertNotificationQuery = `
-          INSERT INTO notifications (
-            managerid, message, createdAt, \`read\`
-          ) VALUES (?, ?, NOW(), 0)
-        `;
-        db.query(insertNotificationQuery, [managerid, notificationMessage], (notifErr, notifResult) => {
-          if (notifErr) {
-            console.error("Error inserting notification:", notifErr);
-            // Continue without interrupting the flow.
-          }
-          return callback(null, result);
-        });
-      } else {
-        return callback(null, result);
-      }
-      // --- End Notification Insertion ---
-    });
-    // --- End Reassign Lead Insertion ---
-  });
-},
-
-  
+    db.query(query, [...data], callback);
+  },
 
 
   fetchAllLeads: (callback) => {
@@ -191,14 +130,7 @@ createLead: (data, callback) => {
     });
   },
   
-  OpportunityStatuses: (leadid, status1, status2, callback) => {
-    const query = `
-      UPDATE addleads 
-      SET opportunity_status1 = ?, opportunity_status2 = ? 
-      WHERE leadid = ?
-    `;
-    db.query(query, [status1, status2, leadid], callback);
-  },
+  
 
 
   

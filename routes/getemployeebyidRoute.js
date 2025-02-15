@@ -35,9 +35,10 @@ router.get("/employee/:id", (req, res) => {
 // Update employee details including image
 router.put("/employee/update/:id", upload.single("image"), (req, res) => {
   const employeeId = req.params.id;
+  console.log("Received Body:", req.body);
   const { name, email, mobile, dob, qualification, address } = req.body;
   const image = req.file ? `/uploads/${req.file.filename}` : null;
-
+  console.log("Received Body:", req.file);
   let query = "UPDATE employees SET name=?, email=?, mobile=?, dob=?, qualification=?, address=?";
   let values = [name, email, mobile, dob, qualification, address];
 

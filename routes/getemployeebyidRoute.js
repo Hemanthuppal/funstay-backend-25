@@ -59,4 +59,29 @@ router.put("/employee/update/:id", upload.single("image"), (req, res) => {
   });
 });
 
+
+
+
+router.put("/updateemployee/:id", (req, res) => {
+  const employeeId = req.params.id;
+  console.log("Received Body:", req.body);
+
+  const { name, email, mobile, password, role, managerId, assign_manager } = req.body;
+
+  // Update query with correct syntax
+  let query = `
+    UPDATE employees 
+    SET name = ?, email = ?, mobile = ?, password = ?, role = ?, managerId = ?, assign_manager = ? 
+    WHERE id = ?`;
+
+  let values = [name, email, mobile, password, role, managerId, assign_manager, employeeId];
+
+  db.query(query, values, (err, result) => {
+    if (err) {
+      console.error("Error updating employee:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+    res.json({ message: "Profile updated successfully" });
+  });
+});
 module.exports = router;

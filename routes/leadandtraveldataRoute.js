@@ -39,6 +39,7 @@ router.put("/update-lead-customer/:leadid", (req, res) => {
         another_name,
         another_email,
         another_phone_number,
+        origincity,
         destination,
         corporate_id,
         primaryStatus,
@@ -51,14 +52,14 @@ router.put("/update-lead-customer/:leadid", (req, res) => {
     const updateLeadQuery = `
       UPDATE addleads 
       SET lead_type = ?, name = ?, country_code = ?, phone_number = ?, email = ?, sources = ?, 
-          description = ?, another_name = ?, another_email = ?, another_phone_number = ?, 
+          description = ?, another_name = ?, another_email = ?, another_phone_number = ?,origincity = ?, 
           destination = ?, corporate_id = ?, primaryStatus = ?, secondaryStatus = ?, 
           primarySource = ?, secondarysource = ?
       WHERE leadid = ?`;
 
     db.query(updateLeadQuery, [
         lead_type, name, country_code, phone_number, email, sources, description, 
-        another_name, another_email, another_phone_number, destination, corporate_id, 
+        another_name, another_email, another_phone_number, origincity, destination, corporate_id, 
         primaryStatus, secondaryStatus, primarySource, secondarysource, leadid
     ], (err, result) => {
         if (err) {

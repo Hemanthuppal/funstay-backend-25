@@ -12,6 +12,7 @@ exports.createLead = (req, res) => {
     country_code,
     primarySource,
     secondarysource,
+    origincity,
     destination,
     another_name,
     another_email,
@@ -72,15 +73,15 @@ exports.createLead = (req, res) => {
       const insertLeadQuery = `
         INSERT INTO addleads (
           lead_type, name, email, phone_number, country_code,
-          primarySource, secondarysource, destination,
+          primarySource, secondarysource, origincity, destination,
           another_name, another_email, another_phone_number,
           corporate_id, description, assignedSalesId, assignedSalesName,
           assign_to_manager, managerid, customerid, customer_status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
       const leadData = [
         lead_type, name, email, phone_number, country_code,
-        primarySource, secondarysource, destination,
+        primarySource, secondarysource, origincity, destination,
         another_name, another_email, another_phone_number,
         corporate_id ? Number(corporate_id) : null,
         description,

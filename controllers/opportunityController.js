@@ -95,6 +95,7 @@ exports.createOpportunity = (req, res) => {
   const {
     leadid,
     customerid, // Add customerid to the destructured request body
+    origincity,
     destination,
     start_date,
     end_date,
@@ -112,6 +113,7 @@ exports.createOpportunity = (req, res) => {
   const opportunityData = [
     leadid,
     customerid, // Include customerid in the opportunityData array
+    origincity,
     destination,
     start_date,
     end_date,

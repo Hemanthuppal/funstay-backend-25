@@ -135,6 +135,7 @@ router.put('/api/customers/:id', (req, res) => {
 router.put('/api/travel-opportunities/:id', (req, res) => {
   const { id } = req.params;
   const {
+    origincity,
     destination,
     start_date,
     end_date,
@@ -150,6 +151,7 @@ router.put('/api/travel-opportunities/:id', (req, res) => {
   const query = `
     UPDATE travel_opportunity
     SET 
+    origincity = ?,
       destination = ?, 
       start_date = ?, 
       end_date = ?, 
@@ -166,6 +168,7 @@ router.put('/api/travel-opportunities/:id', (req, res) => {
   db.query(
     query,
     [
+      origincity,
       destination,
       start_date,
       end_date,

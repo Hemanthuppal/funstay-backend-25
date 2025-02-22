@@ -4,10 +4,10 @@ const Opportunity = {
   createOpportunity: (data, callback) => {
     const query = `
       INSERT INTO travel_opportunity (
-        leadid, customerid, destination, start_date, end_date, duration, adults_count, 
+        leadid, customerid, origincity,destination, start_date, end_date, duration, adults_count, 
         children_count, child_ages, approx_budget, assignee, notes, comments, 
         reminder_setting, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, NOW(), NOW())
     `;
     db.query(query, data, callback);
   },

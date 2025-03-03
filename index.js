@@ -21,7 +21,8 @@ const notificationRoute = require('./routes/notificationRoute');
 const getemployeebyidRoute = require('./routes/getemployeebyidRoute');
 const addmanagerRoute = require('./routes/addmanagerRoute');
 const getandgetbyidemployeeRoute = require('./routes/getandgetbyidemployeeRoute');
-const leadandtraveldataRoute = require('./routes/leadandtraveldataRoute')
+const leadandtraveldataRoute = require('./routes/leadandtraveldataRoute');
+const destinationRoute = require('./routes/destinationRoute');
 const path = require("path");
 
 const app = express();
@@ -54,6 +55,7 @@ app.use('/', addmanagerRoute);
 app.use('/', getandgetbyidemployeeRoute);
 
 app.use('/api', leadandtraveldataRoute);
+app.use('/api', destinationRoute);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

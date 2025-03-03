@@ -28,6 +28,7 @@ exports.createLead = (req, res) => {
     manager_id
   } = req.body;
 
+  const destinationString = destination.join(", ");
   // Check if customer already exists
   const checkCustomerQuery = "SELECT id, customer_status FROM customers WHERE phone_number = ?";
   db.query(checkCustomerQuery, [phone_number], (err, results) => {
@@ -81,7 +82,7 @@ exports.createLead = (req, res) => {
       `;
       const leadData = [
         lead_type, name, email, phone_number, country_code,
-        primarySource, secondarysource, origincity, destination,
+        primarySource, secondarysource, origincity,  destinationString,
         another_name, another_email, another_phone_number,
         corporate_id ? Number(corporate_id) : null,
         description,

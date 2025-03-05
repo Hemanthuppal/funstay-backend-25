@@ -40,7 +40,7 @@ router.get("/getdestinations", (req, res) => {
   
   // Fetch dropdown options from MySQL
   router.get("/destinations", (req, res) => {
-    db.query("SELECT * FROM options", (err, results) => {
+    db.query("SELECT * FROM options ORDER BY created_at DESC", (err, results) => {
       if (err) {
         res.status(500).json({ error: "Database error" });
       } else {

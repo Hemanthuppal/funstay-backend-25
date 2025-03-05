@@ -9,7 +9,7 @@ router.get("/fetch-data", (req, res) => {
     FROM addleads a 
     LEFT JOIN travel_opportunity t 
     ON a.leadid = t.leadid
-    ORDER BY t.created_at DESC`; // Ordering by travel_created_at in descending order
+    ORDER BY t.leadid DESC`; // Ordering by travel_created_at in descending order
 
     db.query(query, (err, results) => {
         if (err) {

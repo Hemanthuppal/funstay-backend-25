@@ -12,10 +12,16 @@ const Opportunity = {
     db.query(query, data, callback);
   },
   
-  updateCustomerStatus: (customerid, status, callback) => {
-    const query = 'UPDATE customers SET customer_status = ? WHERE id = ?';
-    db.query(query, [status, customerid], callback);
+  // updateCustomerStatus: (customerid, status, callback) => {
+  //   const query = 'UPDATE customers SET customer_status = ? WHERE id = ?';
+  //   db.query(query, [status, customerid], callback);
+  // },
+
+  updateCustomerStatus: (customerid, status, origincity, callback) => {
+    const query = 'UPDATE customers SET customer_status = ?, origincity = ? WHERE id = ?';
+    db.query(query, [status, origincity, customerid], callback);
   },
+  
 
   deleteOpportunityByLeadId: (leadid, callback) => {
     // Start a transaction

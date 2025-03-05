@@ -154,13 +154,22 @@ exports.createOpportunity = (req, res) => {
         }
 
         // Update customer status to "existing" in customers table
-        Opportunity.updateCustomerStatus(customerid, 'existing', (err) => {
-          if (err) {
-            console.error('Error updating customer status:', err);
-            return db.rollback(() => {
-              res.status(500).json({ message: 'Failed to update customer status.' });
-            });
-          }
+        // Opportunity.updateCustomerStatus(customerid, 'existing', (err) => {
+        //   if (err) {
+        //     console.error('Error updating customer status:', err);
+        //     return db.rollback(() => {
+        //       res.status(500).json({ message: 'Failed to update customer status.' });
+        //     });
+        //   }
+        // Update customer status and origin city in customers table
+Opportunity.updateCustomerStatus(customerid, 'existing', origincity, (err) => {
+  if (err) {
+    console.error('Error updating customer status and origin city:', err);
+    return db.rollback(() => {
+      res.status(500).json({ message: 'Failed to update customer status and origin city.' });
+    });
+  }
+
 
           // Update opportunity statuses in the addleads table
           const opportunityStatus1 = "In Progress";
